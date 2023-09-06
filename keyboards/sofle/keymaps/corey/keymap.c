@@ -43,9 +43,9 @@ KC_LSFT, LCTL_T(KC_Z), KC_X, KC_C, KC_V, KC_B, KC_MUTE, KC_RGUI, KC_N, KC_M, KC_
 KC_LCTL, KC_LALT, MO(3), KC_BSPC, KC_SPC, KC_TAB, KC_ENT, MO(1), LCTL_T(KC_ESC), MO(2)),
 
 [_SYMBOLS_LAYER] = LAYOUT(
-KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,
-KC_NO, KC_EXLM, KC_AT, KC_LCBR, KC_RCBR, KC_PIPE, KC_NO, KC_P7, KC_P8, KC_P9, KC_PSLS, KC_F11, 
-KC_NO, KC_HASH, KC_DLR, KC_LPRN, KC_RPRN, KC_GRV, KC_NO, KC_P4, KC_P5, KC_P6, KC_PAST, KC_F12, 
+KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11,
+KC_NO, KC_EXLM, KC_AT, KC_LCBR, KC_RCBR, KC_PIPE, KC_NO, KC_P7, KC_P8, KC_P9, KC_PSLS, KC_F12, 
+KC_NO, KC_HASH, KC_DLR, KC_LPRN, KC_RPRN, KC_GRV, KC_NO, KC_P4, KC_P5, KC_P6, KC_PAST, KC_NO, //<-- replace this key (?)
 KC_NO, KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD, KC_NO, KC_NO, KC_NO, KC_P1, KC_P2, KC_P3,
 KC_PMNS, KC_PEQL, KC_NO, KC_LT, KC_GT, KC_NO, KC_NO, KC_NO, KC_P0, KC_NO, KC_PDOT, KC_PPLS),
 
@@ -80,6 +80,20 @@ KC_NO, KC_NO, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_
 #define HSV_OVERRIDE_HELP(h, s, v, Override) h, s , Override
 #define HSV_OVERRIDE(hsv, Override) HSV_OVERRIDE_HELP(hsv,Override)
 
+/*
+Lights adressing based on the build guide PNG
+Indicator:1
+Drop Lighting: (Underglow) 2-7 (6 total)
+Per Key lighting 8-36 (probably not in the order you think.)
+Second side should therefore be 36 offset (i think? existing code has 35 offset :/)
+https://josefadamcik.github.io/SofleKeyboard/images/build_guide_rgb/board-both.png
+
+Lights are turned on by, i believe, starting with the index of the light you'd like to address,
+    adding the number of lights you want to turn on from that position,
+    and passing the HSV colour you'd like to give those lights.
+
+I'm still not sure why I'm getting a baseline of red :)
+*/
 // Light combinations
 #define SET_INDICATORS(hsv) \
 	{0, 1, HSV_OVERRIDE_HELP(hsv, INDICATOR_BRIGHTNESS)}, \
@@ -87,76 +101,41 @@ KC_NO, KC_NO, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_
 #define SET_UNDERGLOW(hsv) \
 	{1, 6, hsv}, \
     {35+1, 6,hsv}
-#define SET_NUMPAD(hsv)     \
-	{35+15, 5, hsv},\
-	  {35+22, 3, hsv},\
-	  {35+27, 3, hsv}
-#define SET_NUMROW(hsv) \
-	{10, 2, hsv}, \
-		{20, 2, hsv}, \
-		{30, 2, hsv}, \
-	  {35+ 10, 2, hsv}, \
-	  {35+ 20, 2, hsv}, \
-	  {35+ 30, 2, hsv}
-#define SET_INNER_COL(hsv)	\
-	{33, 4, hsv}, \
-	  {35+ 33, 4, hsv}
-#define SET_OUTER_COL(hsv) \
-	{7, 4, hsv}, \
-	  {35+ 7, 4, hsv}
-#define SET_THUMB_CLUSTER(hsv) 	\
-	{25, 2, hsv}, \
-	  {35+ 25, 2, hsv}
+
+//This sets literally every LED
 #define SET_LAYER_ID(hsv) 	\
 	{0, 1, HSV_OVERRIDE_HELP(hsv, INDICATOR_BRIGHTNESS)}, \
     {35+0, 1, HSV_OVERRIDE_HELP(hsv, INDICATOR_BRIGHTNESS)}, \
-		{1, 6, hsv}, \
-    {35+1, 6, hsv}, \
-		{7, 4, hsv}, \
-	  {35+ 7, 4, hsv}, \
-		{25, 2, hsv}, \
-	  {35+ 25, 2, hsv}
+    {35+1, 36, hsv}, \
+    {1, 36, hsv}
+
 
 char layer_state_str[70];
 // Now define the array of layers. Later layers take precedence
 
 
 const rgblight_segment_t PROGMEM layer_qwerty_lights[] = RGBLIGHT_LAYER_SEGMENTS(
-    SET_LAYER_ID(HSV_OFF),
-    SET_UNDERGLOW(HSV_BLUE)
+    SET_LAYER_ID(HSV_BLUE),
+    SET_UNDERGLOW(HSV_YELLOW)
 );
 
 
 const rgblight_segment_t PROGMEM layer_symbol_lights[] = RGBLIGHT_LAYER_SEGMENTS(
-    SET_LAYER_ID(HSV_OFF),
-	SET_UNDERGLOW(HSV_PINK)
+    SET_LAYER_ID(HSV_PINK),
+	SET_UNDERGLOW(HSV_GREEN)
 );
 
 const rgblight_segment_t PROGMEM layer_mouse_lights[] = RGBLIGHT_LAYER_SEGMENTS(
-    SET_LAYER_ID(HSV_OFF),
-	SET_UNDERGLOW(HSV_RED)
+    SET_LAYER_ID(HSV_RED),
+	SET_UNDERGLOW(HSV_CYAN)
 );
 
 const rgblight_segment_t PROGMEM layer_nav_lights[] = RGBLIGHT_LAYER_SEGMENTS(
-    SET_LAYER_ID(HSV_OFF),
-    SET_UNDERGLOW(HSV_PURPLE)
+    SET_LAYER_ID(HSV_TURQUOISE),
+    SET_UNDERGLOW(HSV_MAGENTA)
 );
 
-// //_NUMPAD
-// const rgblight_segment_t PROGMEM layer_numpad_lights[] = RGBLIGHT_LAYER_SEGMENTS(
-// 	SET_INDICATORS(HSV_ORANGE),
-//     SET_UNDERGLOW(HSV_ORANGE),
-// 	SET_NUMPAD(HSV_BLUE),
-//     {7, 4, HSV_ORANGE},
-//     {25, 2, HSV_ORANGE},
-//     {35+6, 4, HSV_ORANGE},
-//     {35+25, 2, HSV_ORANGE}
-//     );
-// // _SWITCHER   // light up top row
-// const rgblight_segment_t PROGMEM layer_switcher_lights[] = RGBLIGHT_LAYER_SEGMENTS(
-// 	SET_LAYER_ID(HSV_GREEN),
-// 	SET_NUMROW(HSV_GREEN)
-// );
+
 
 const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
 
@@ -182,7 +161,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 	rgblight_set_layer_state(0, layer_state_cmp(state, _BASE_LAYER));
 	rgblight_set_layer_state(1, layer_state_cmp(state, _SYMBOLS_LAYER));
 	rgblight_set_layer_state(2, layer_state_cmp(state, _MOUSE_LAYER));
-	rgblight_set_layer_state(3, layer_state_cmp(state, _NAV_LAYER));sfasf
+	rgblight_set_layer_state(3, layer_state_cmp(state, _NAV_LAYER));
 	// rgblight_set_layer_state(4, layer_state_cmp(state, _LAYER4));
 	// rgblight_set_layer_state(5, layer_state_cmp(state, _SWITCH));
     return state;
@@ -192,7 +171,8 @@ void keyboard_post_init_user(void) {
     rgblight_layers = my_rgb_layers;
 
     // skip setting mode, as i think the 'static' animation is what's lighting up whole
-	// rgblight_mode(10);// haven't found a way to set this in a more useful way
+    // unskip again.
+	rgblight_mode(10);// haven't found a way to set this in a more useful way
 
 }
 #endif
@@ -405,7 +385,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     //returning early for now as something separate seems to be doing volume for me on the encoders, and dual function isn't as fun as it seems
-    return true;
+    // return true;
     if (index == 0) {
         if (clockwise) {
             tap_code(KC_VOLU);
@@ -422,7 +402,6 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                     tap_code(KC_PGUP);
                 }
                 break;
-            case _SYMBOLS_LAYER:
             case _MOUSE_LAYER:
             case _NAV_LAYER:
                     if (clockwise) {
@@ -431,6 +410,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                         tap_code(KC_UP);
                     }
                 break;
+            case _SYMBOLS_LAYER:
             default:
                     if (clockwise) {
                         tap_code(KC_WH_D);
@@ -440,7 +420,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 break;
 		}
     }
-    return true;
+    return false;
 }
 
 #endif

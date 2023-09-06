@@ -37,7 +37,12 @@
     #undef TAPPING_TERM
     #define TAPPING_TERM 200
 #endif
-#define ENCODER_DIRECTION_FLIP
+// #define ENCODER_DIRECTION_FLIP
+
+// #define ENCODERS_PAD_A { f5 }
+// #define ENCODERS_PAD_B { f4 }
+
+#define ENCODER_RESOLUTION 2
 
 
 #define RGBLIGHT_SLEEP
